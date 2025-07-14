@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>프롤리아 2차 투여일 계산기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+      margin: 0;
+      background-color: #ffffff;
+      font-size: 20px;
+    }
+
+    h1 {
+      color: #2c3e50;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      max-width: 250px;
+      margin-bottom: 40px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    input[type="date"] {
+      padding: 12px;
+      font-size: 18px;
+      width: 220px;
+      max-width: 90%;
+    }
+
+    button {
+      padding: 14px 26px;
+      font-size: 18px;
+      font-weight: bold;
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    button:hover {
+      background-color: #1f6394;
+    }
+
+    #result {
+      margin-top: 40px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #2980b9;
+      line-height: 1.6;
+    }
+
+    .black-label {
+      color: black;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        font-size: 16px;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+
+      #result {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 로고 -->
+  <img class="logo" src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdna%2FlTvHO%2Fbtq0mxqJZ8e%2FAAAAAAAAAAAAAAAAAAAAAOnNX8tIUeQmpwFvl_0aonCn-K-LgMcTjluI1TehltMC%2Fimg.jpg%3Fcredential%3DyqXZFxpELC7KVnFOS48ylbz2pIh7yKj8%26expires%3D1753973999%26allow_ip%3D%26allow_referer%3D%26signature%3Dd1q0P8MfOUWfGUfVjZr7m1nQQ%252BA%253D" alt="Prolia Logo">
+
+  <h1>📅 프롤리아 2차 투여일 계산기</h1>
+
+  <label for="firstDate">첫 투여일을 선택하세요:</label>
+  <input type="date" id="firstDate" lang="ko">
+  <button onclick="calculateDate()">계산하기</button>
+
+  <div id="result"></div>
+
+  <script>
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}년 ${month}월 ${day}일`;
+    }
+
+    function calculateDate() {
+      const inputDate = document.getElementById('firstDate').value;
+      const resultDiv = document.getElementById('result');
+
+      if (!inputDate) {
+        resultDiv.innerText = "날짜를 먼저 선택해주세요.";
+        return;
+      }
+
+      const firstDate = new Date(inputDate + "T00:00:00"); // 시간 오류 방지
+      const targetDate = new Date(firstDate);
+      targetDate.setDate(targetDate.getDate() + 183);
+
+      const earlyDate = new Date(targetDate);
+      earlyDate.setDate(earlyDate.getDate() - 28);
+
+      const formattedTarget = formatDate(targetDate);
+      const formattedEarly = formatDate(earlyDate);
+
+      resultDiv.innerHTML =
+        `<span class="black-label">✅ 2차 투여 예정일(183일 후):</span><br>` +
+        `<strong>${formattedTarget}</strong><br><br>` +
+        `<span class="black-label">📌 조기 투여 허용 범위<br>(최대 28일 전 투여까지 인정):</span><br>` +
+        `➡️ <strong>${formattedEarly}</strong> ~ <strong>${formattedTarget}</strong>`;
+    }
+
+    // 결과 초기화
+    document.getElementById('firstDate').addEventListener('input', () => {
+      document.getElementById('result').innerHTML = '';
+    });
+  </script>
+
+  <!-- 하단 급여 기준 요약 -->
+  <hr style="margin-top: 60px;">
+  <section style="text-align: left; max-width: 700px; margin: 50px auto; font-size: 16px; line-height: 1.6;">
+    <h2 style="text-align: center; color: #2c3e50;">📄 프롤리아® 급여 기준 요약</h2>
+    <ul>
+      <li><strong>급여 기준:</strong> 중심골(T-score ≤ -2.5) 또는 QCT ≤ 80 mg/㎤, 혹은 골다공증성 골절 확인 시</li>
+      <li><strong>조기 투여:</strong> 불가피한 경우에 한해 최대 28일 앞당겨 6개월 투여 인정</li>
+      <li><strong>투여 간격:</strong> <u>183일 이상</u> 간격 필요 (실제 청구 기준)</li>
+      <li><strong>-2.5 &lt; T-score ≤ -2.0</strong>인 경우:
+        <ul>
+          <li>1년(2회) + 1년(2회) → 최대 2년까지 연속 투여 인정</li>
+          <li>이후 추적 검사로 기준 유지 시 1년씩 연장 가능</li>
+        </ul>
+      </li>
+      <li><strong>급여 인정 부위:</strong> 요추 2부위 이상 또는 대퇴, 골절 확인 부위</li>
+      <li><strong>주의사항:</strong> L3, L4 등 퇴행성 변화는 방사선 등으로 배제 사유 명시</li>
+    </ul>
+    <p style="font-size: 14px; color: gray; margin-top: 20px;">
+      ※ 자세한 기준은 보건복지부 고시 및 심평원 공고(2025-132호, 2024-72호)를 참조하십시오.
+    </p>
+  </section>
+
+</body>
+</html>
